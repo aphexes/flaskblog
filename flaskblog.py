@@ -1,6 +1,9 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, url_for
+from forms import RegistrationForm, LoginForm
 
 app = Flask(__name__)
+
+app.config['SECRET_KEY'] = 'e8883e90b0d88a02978811153ba747a6'
 
 posts = [
     {
@@ -27,6 +30,16 @@ def home():
 @app.route("/about")
 def about():
     return render_template('about.html', title='About')
+
+@app.route("/register", methods=['GET', 'POST']) # list specifying methods allowed
+def register():
+    form = RegistrationForm()
+    return render_template('register.html', title='Register', form=form)
+
+@app.route("/login")
+def login():
+    form = LoginForm()
+    return render_template('login.html', title='Login', form=form)
 
 # this conditional is only true if we run the script with python directly;
 # if we import the module to somewhere else, the name will be the name of the module
