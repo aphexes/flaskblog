@@ -1,7 +1,13 @@
 from datetime import datetime
-from flaskblog import db    # we can import from flaskblog instead of __main__ now, using the __init__.py file
+from flaskblog import db, login_manager    # we can import from flaskblog instead of __main__ now, using the __init__.py file
+from flask_login import UserMixin
 
-class User(db.Model):
+@login_manager.user_loader  # @ denotes a decorator
+def load_user(user_id):
+    return User.query.get(int(user_id))    # gets the user with that id and casts it to an integer
+    #user_id naming convention required
+
+class User(db.Model, UserMixin):
     id         = db.Column(db.Integer, primary_key=True)    # primary_key is a unique id for our user
     username   = db.Column(db.String(20), unique=True, nullable=False)   # 20 character max length, must be unique, can't null bc username required
     email      = db.Column(db.String(120), unique=True, nullable=False)

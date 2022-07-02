@@ -1,7 +1,8 @@
-from flask import render_template, url_for, flash, redirect
-from flaskblog import app
+from flask import render_template, url_for, flash, redirect, request
+from flaskblog import app, db, bcrypt
 from flaskblog.forms import RegistrationForm, LoginForm
 from flaskblog.models import User, Post   # we place this here so that db is already defined when we run through model
+from flask_login import login_user, current_user, logout_user, login_required
 
 posts = [
     {
@@ -31,21 +32,48 @@ def about():
 
 @app.route("/register", methods=['GET', 'POST']) # list specifying allowed methods
 def register():
+    if current_user.is_authenticated:
+        return redirect(url_for('home'))
     form = RegistrationForm()
     if form.validate_on_submit():
-        flash(f'Account created for {form.username.data}!', 'success')
+        hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
+        # .decode('utf-8') makes it a string instead of bytes
+        user = User(username=form.username.data, email=form.email.data, password=hashed_password)
+        db.session.add(user)    # these two lines add a user to the database
+        db.session.commit()
+        flash('Your account has been created! You are now able to log in', 'success')
         # bootstrap has different alert styles for success, warning, and danger
-        return redirect(url_for('home'))
+        return redirect(url_for('login'))
         # again, home refers to the FUNCTION name in line 25 and not the url path
     return render_template('register.html', title='Register', form=form)
 
-@app.route("/login", methods=['GET', 'POST'])
+@app.route("/login", methods=['GET', 'POST'])   # POST is more secure; cannot be seen, even without being encrypted
 def login():
+    if current_user.is_authenticated:
+        return redirect(url_for('home'))
     form = LoginForm()
     if form.validate_on_submit():
-        if form.email.data == 'admin@blog.com' and form.password.data == 'password':
-            flash('You have been logged in!', 'success')
-            return redirect(url_for('home'))
+        # if form.email.data == 'admin@blog.com' and form.password.data == 'password':
+        # flash('You have been logged in!', 'success')
+        # return redirect(url_for('home'))
+    # else:
+        user = User.query.filter_by(email=form.email.data).first()
+        if user and bcrypt.check_password_hash(user.password, form.password.data):
+        # compares user.password (from the database) to form.password.data (user input password)
+            login_user(user, remember=form.remember.data)   # remember is a True/False value (checkbox)
+            next_page = request.args.get('next')    # args is a dictionary; using the get method will return None if the next parameter doesn't exist
+            return redirect(next_page) if next_page else redirect(url_for('home'))
+            # this is called a ternary conditional; if next_page is None/False then we just redirect home
         else:
-            flash('Login unsuccessful. Please check username and password.', 'danger')
+            flash('Login unsuccessful. Please check email and password.', 'danger')
     return render_template('login.html', title='Login', form=form)
+
+@app.route("/logout")   # don't need to specify default 'GET' method
+def logout():
+    logout_user()
+    return redirect(url_for('home'))
+
+@app.route("/account")
+@login_required
+def account():
+    return render_template('account.html', title='Account')
