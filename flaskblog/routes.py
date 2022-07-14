@@ -25,9 +25,12 @@ posts = [
 @app.route("/")
 @app.route("/home")
 def home():
-    posts = Post.query.all()
+    page = request.args.get('page', 1, type=int)    # default page set to 1
+    posts = Post.query.order_by(Post.date_posted.desc()).paginate(page=page, per_page=5)
+    # date_posted.desc() gives us our posts from latest to oldest
+    # page=page is how we send a selected page to our query
     # this grabs the posts and displays them on the home screen
-    return render_template('home.html', comments=posts)
+    return render_template('home.html', posts=posts)
     # we are passing these posts into our home template and gaining access
     # to that variable in our home template as equal to our post data
 
@@ -162,3 +165,13 @@ def delete_post(post_id):
     db.session.commit()
     flash('Your post has been deleted!', 'success')
     return redirect(url_for('home'))
+
+@app.route("/user/<string:username>")
+def user_posts(username):
+    page = request.args.get('page', 1, type=int)
+    user = User.query.filter_by(username=username).first_or_404()
+    # get the first user with this username or return 404; similar to GET method but doesn't search by id
+    posts = Post.query.filter_by(author=user)\
+        .order_by(Post.date_posted.desc())\
+        .paginate(page=page, per_page=5)
+    return render_template('user_posts.html', posts=posts, user=user)
