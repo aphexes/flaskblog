@@ -3,6 +3,7 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
 from flask_login import LoginManager
+from flask_mail import Mail
 
 app = Flask(__name__)   # our routes.py file is importing this app variable; to avoid circular imports, we will import routes below (line 10) 
 app.config['SECRET_KEY'] = 'e8883e90b0d88a02978811153ba747a6'
