@@ -1,4 +1,4 @@
-import bcrypt
+import os
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
@@ -17,6 +17,12 @@ login_manager.login_view = 'login'
 # flashes default message "Please log in to access this page."
 # customize the message by setting LoginManager.login_message
 login_manager.login_message_category = 'info'   # info class is a blue informatiion alert from Bootstrap
+app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+app.config['MAIL_PORT'] = 587
+app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_USERNAME'] = os.environ.get('EMAIL_USER')
+app.config['MAIL_PASSWORD'] = os.environ.get('EMAIL_PASS')
+mail = Mail(app)
 from flaskblog import routes
 
 '''

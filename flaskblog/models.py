@@ -17,15 +17,15 @@ class User(db.Model, UserMixin):
     posts      = db.relationship('Post', backref='author', lazy=True)    # runs in the background b/c not a column
     # backref allows us to use the author attribute to get the user who created the post
 
-    def get_reset_token(self, expires_sec=1800):
-        s = Serializer(app.config['SECRET_KEY'], expires_sec)
-        return s.dumps({'user_id': self.id}).decode('utf-8')
+    def get_reset_token(self):
+        s = Serializer(app.config['SECRET_KEY'],)
+        return s.dumps({'user_id': self.id})
 
     @staticmethod
-    def verify_reset_token(token):
+    def verify_reset_token(token, expires_sec=1800):
         s = Serializer(app.config['SECRET_KEY'])
         try:
-            user_id = s.loads(token)['user_id']
+            user_id=s.loads(token, expires_sec)['user_id']
         except:
             return None
         return User.query.get(user_id)
