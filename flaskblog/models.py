@@ -1,6 +1,7 @@
 from datetime import datetime
 from itsdangerous import URLSafeTimedSerializer as Serializer
-from flaskblog import db, login_manager, app    # we can import from flaskblog instead of __main__ now, using the __init__.py file
+from flask import current_app
+from flaskblog import db, login_manager # we can import from flaskblog instead of __main__ now, using the __init__.py file
 from flask_login import UserMixin
 
 @login_manager.user_loader  # @ denotes a decorator
@@ -18,12 +19,12 @@ class User(db.Model, UserMixin):
     # backref allows us to use the author attribute to get the user who created the post
 
     def get_reset_token(self):
-        s = Serializer(app.config['SECRET_KEY'],)
+        s = Serializer(current_app.config['SECRET_KEY'],)
         return s.dumps({'user_id': self.id})
 
     @staticmethod
     def verify_reset_token(token, expires_sec=1800):
-        s = Serializer(app.config['SECRET_KEY'])
+        s = Serializer(current_app.config['SECRET_KEY'])
         try:
             user_id=s.loads(token, expires_sec)['user_id']
         except:

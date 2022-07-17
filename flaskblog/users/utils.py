@@ -1,9 +1,9 @@
 import os
 import secrets
 from PIL import Image
-from flask import url_for
+from flask import url_for, current_app
 from flask_mail import Message
-from flaskblog import app, mail
+from flaskblog import mail
 
 def save_picture(form_picture):
     random_hex = secrets.token_hex(8)
@@ -11,8 +11,8 @@ def save_picture(form_picture):
     # we are splitting the ext (file type) from the file name (f_name)
     # we can store the filename in the _ variable that we will NOT use
     picture_fn = random_hex + f_ext
-    picture_path = os.path.join(app.root_path, 'static/profile_pics', picture_fn)
-    # app.root.path gives us the full path up to the package directory
+    picture_path = os.path.join(current_app.root_path, 'static/profile_pics', picture_fn)
+    # current_app.root.path gives us the full path up to the package directory
 
     output_size = (125, 125)    # tuple specifying dimension in px
     i = Image.open(form_picture)
