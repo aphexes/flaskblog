@@ -39,14 +39,14 @@
             <div class="form-group">
                 {{ form.submit(class="btn btn-outline-info") }}
                 <small class="text-muted ml-2"> <!-- ml-2 = margin-left 2px -->
-                    <a href="{{ url_for('reset_request') }}">Forgot your password?</a>    <!-- # = placeholder link-->
+                    <a href="{{ url_for('users.reset_request') }}">Forgot your password?</a>    <!-- # = placeholder link-->
                 </small>
             </div>
         </form>
     </div>
     <div class="border-top pt-3">   <!-- padding top value 3 -->
         <small class="text-muted">
-            Don't Have An Account? <a class="ml-2" href="{{ url_for('register') }}">Sign Up Now</a>
+            Don't Have An Account? <a class="ml-2" href="{{ url_for('users.register') }}">Sign Up Now</a>
             <!-- Retrieves the login page from the function @ line 39 on flaskblog.py, NOT the path -->
         </small>
     </div>

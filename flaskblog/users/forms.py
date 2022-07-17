@@ -1,9 +1,9 @@
 from flask_wtf import FlaskForm     # these are all pip installed, no changes necessary
 from flask_wtf.file import FileField, FileAllowed
 # FileField = defines type of field; FileAllowed acts as a file type validator
-from flask_login import current_user
-from wtforms import StringField, PasswordField, SubmitField, BooleanField, TextAreaField
+from wtforms import StringField, PasswordField, SubmitField, BooleanField
 from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
+from flask_login import current_user
 from flaskblog.models import User
 
 class RegistrationForm(FlaskForm):
@@ -44,11 +44,6 @@ class UpdateAccountForm(FlaskForm):
             user = User.query.filter_by(email=email.data).first()
             if user:
                 raise ValidationError('An account with this email already exists. Please use a different email.')
-
-class PostForm(FlaskForm):
-    title = StringField('Title', validators=[DataRequired()])
-    content = TextAreaField('Content', validators=[DataRequired()])
-    submit = SubmitField('Post')
 
 class RequestResetForm(FlaskForm):
     email = StringField('Email', validators=[DataRequired(), Email()])

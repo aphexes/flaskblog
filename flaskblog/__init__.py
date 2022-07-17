@@ -12,7 +12,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///site.db'
 db = SQLAlchemy(app)
 bcrypt = Bcrypt(app)
 login_manager = LoginManager(app)
-login_manager.login_view = 'login'
+login_manager.login_view = 'users.login'
 # the view that we pass in here is the function name of our route
 # flashes default message "Please log in to access this page."
 # customize the message by setting LoginManager.login_message
@@ -23,7 +23,14 @@ app.config['MAIL_USE_TLS'] = True
 app.config['MAIL_USERNAME'] = os.environ.get('EMAIL_USER')
 app.config['MAIL_PASSWORD'] = os.environ.get('EMAIL_PASS')
 mail = Mail(app)
-from flaskblog import routes
+
+from flaskblog.users.routes import users
+from flaskblog.posts.routes import posts
+from flaskblog.main.routes import main
+app.register_blueprint(users)
+app.register_blueprint(posts)
+app.register_blueprint(main)
+
 
 '''
 In venv, python3 run.py
