@@ -9,7 +9,9 @@ users = Blueprint('users', __name__)
 
 # we're creating routes specifically for the users blueprint
 @users.route("/register", methods=['GET', 'POST']) # list specifying allowed methods
+# @ decorators modify the functions that follow, and associate the URLs with the function
 def register():
+    #register() is a view function - mapped to a route url so Flask knows what logic to execute when a webpage is requested
     if current_user.is_authenticated:
         return redirect(url_for('main.home'))
     form = RegistrationForm()
@@ -40,6 +42,7 @@ def login():
         # compares user.password (from the database) to form.password.data (user input password)
             login_user(user, remember=form.remember.data)   # remember is a True/False value (checkbox)
             next_page = request.args.get('next')    # args is a dictionary; using the get method will return None if the next parameter doesn't exist
+            # request.args attribute exposes the contents of the query string in a friendly dictionary format
             return redirect(next_page) if next_page else redirect(url_for('main.home'))
             # this is called a ternary conditional; if next_page is None/False then we just redirect home
         else:

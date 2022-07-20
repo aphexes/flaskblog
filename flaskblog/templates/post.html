@@ -30,6 +30,8 @@
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
           <form action="{{ url_for('posts.delete_post', post_id=post.id) }}" method="POST">
+            <!-- action attribute specifies the URL that should be used when submitting the information entered by the user -->
+            <!-- GET requests add the form field to the URL; POST can submit the form data in the body of the URL -->
             <input class="btn btn-danger" type="submit" value="Delete">
           </form>
         </div>

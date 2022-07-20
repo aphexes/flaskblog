@@ -28,9 +28,11 @@ posts = [
 def new_post():
     form = PostForm()
     if form.validate_on_submit():
+        # validate_on_submit does all the processing work; it will return TRUE when using POST method and confirming all field-attached validators
         post = Post(title=form.title.data, content=form.content.data, author=current_user)
         db.session.add(post)
         db.session.commit()
+        # all changes to a database must be done in the context of a db.session
         flash('Your post has been created!', 'success')
         return redirect(url_for('main.home'))
     return render_template('create_post.html', title='New Post', form=form, legend='New Post')

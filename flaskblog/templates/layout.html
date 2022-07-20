@@ -10,6 +10,7 @@
 
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='main.css') }}">
     <!-- good to use url_for whenever possible; particularly for navbars -->
+    <!-- the argument to url_for is the endpoint name, which is the name of the view function -->
     {% if title %}
         <title>Flask Blog - {{ title }}</title>     <!-- passing from flaskblog.py line 29 (router function)-->
     {% else %}
@@ -50,6 +51,7 @@
           <div class="col-md-8">
             {% with messages = get_flashed_messages(with_categories=true) %}
             <!-- with_categories=true allows us to grab our success category from our flash line in the register router (flaskblog.py) -->
+            <!-- calls get_flashed_messages to a messages variable within the context of the template -->
                 {% if messages %}
                     {% for category, message in messages %}
                     <div class="alert alert-{{ category }}">
@@ -59,8 +61,8 @@
                 {% endif %}
             {% endwith %}
             {% block content %}{% endblock %}
-            <!-- within our home and about templates, we will inherit our layout template
-            but override our content section with what is unique to each page -->
+            <!-- within our home and about templates, we will inherit our layout template but override our
+            content section with what is unique to each page; it knows to replace the empty block content -->
           </div>
           <div class="col-md-4">
             <div class="content-section">

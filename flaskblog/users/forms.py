@@ -13,6 +13,7 @@ class RegistrationForm(FlaskForm):
     confirm_password = PasswordField('Confirm Password', validators=[DataRequired(), EqualTo('password')])
     submit = SubmitField('Sign Up')
     def validate_username(self, username):    # template for our validate format; checking if the user already exists in the database
+        # WTForms takes any methods that match this validate_<field_name> pattern and invokes them in addition to stock validators
         user = User.query.filter_by(username=username.data).first()
         if user:    # if user = None, then the conditional won't be hit
             raise ValidationError('That username is taken. Please choose a different one.')
